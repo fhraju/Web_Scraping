@@ -45,3 +45,30 @@ def getRandomExternalLinks(starting_page):
         return external_links[random.randint(0, len(external_links)-1)]
 
 def followExternalOnly(starting_site):
+    external_link = getRandomExternalLinks(starting_site)
+    print("Random External link is: {}".format(external_link))
+    followExternalOnly(external_link)
+
+#followExternalOnly('http://oreilly.com')
+
+# Collects a list of all external urls found on the site
+all_ext_links = set()
+all_int_links = set()
+
+def getAllExternalLinks(site_url):
+    html = urlopen(site_url)
+    domain = '{}://{}'.format(urlparse(site_url).scheme,urlparse(site_url).netloc)
+    bs = BeautifulSoup(html, 'html.parser')
+    internal_link = getInternalLInks(bs, domain)
+    external_link = getExternalLinks(bs, domain)
+
+    for link in external_link:
+        if link not in all_ext_links:
+            all_ext_links.add(link)
+            print(link)
+    for link in internal_link:
+        if link not in all_int_links:
+            all_int_links.add(link)
+            getAllExternalLinks(link)
+all_int_links.add('http://oreilly.com')
+getAllExternalLinks('http://oreilly.com')
